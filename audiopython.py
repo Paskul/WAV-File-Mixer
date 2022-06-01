@@ -35,21 +35,35 @@ def beep(songNumber):
     if songNumber == 2:
         ipd.display(ipd.Audio(fn_wav2, autoplay=True))
     
-def creatingSongArray(wav, wav2):
-    maxLength = 0
-    if len(wav) > len(wav2):
-        maxLength = len(wav)
-    else:
-        maxLength = len(wav2)
-    workingWav = [0] * maxLength
-    for i in workingWav:
-        workingWav[i] = ((wav[i] + wav2[i])/2.0)
-    #newWav = np.array(workingWav, dtype=np.int16)
-    newWav = np.array(workingWav, dtype=np.float32)
-    # scipy.io.wavfile.write("WrittenFile.wav", 44100, workingWav)
+def creatingSongArray(wav, sample, wav2, sample2):
+    if sample == sample2:
+        maxLength = 0
+        if len(wav) > len(wav2):
+            maxLength = len(wav)
+        else:
+            maxLength = len(wav2)
+        print(maxLength)
+        workingWav = [0.0] * maxLength
+        i = 0
+        while i < 6316032:
+            workingWav[i] = ((wav[i] + wav2[i])/2.0)
+            i += 1
 
-    # tempx, tempFs = librosa.load(templist, sr=None)
-    print_plot_play(x=newWav, Fs=44100, text='WAV file 3: ')
+        # for i in workingWav:
+            # workingWav[i] = ((wav[i] + wav2[i])/2.0)
+        
+        print(wav[4045312])
+        print(wav2[4045312])
+        print((wav[4045312] + wav2[4045312])/2.0)
+        print(workingWav[4045312])
+        #newWav = np.array(workingWav, dtype=np.int16)
+        newWav = np.array(workingWav, dtype=np.float32)
+        # scipy.io.wavfile.write("WrittenFile.wav", 44100, workingWav)
+
+        # tempx, tempFs = librosa.load(templist, sr=None)
+        print_plot_play(x=newWav, Fs=44100, text='WAV file 3: ')
+    else:
+        print("Error! Not the same sample rate! File 1: " + sample + ", File 2: " + sample2)
     
 
 # Read wav1
@@ -68,7 +82,7 @@ print_plot_play(x=x2, Fs=Fs2, text='WAV file 2: ')
 # beep(2);
 # Audio(fn_wav2, sr=None)
 
-creatingSongArray(wav=x, wav2=x2)
+creatingSongArray(wav=x, sample=Fs, wav2=x2, sample2=Fs2)
 
 # Read mp3
 # path = '/Users/pasca/Desktop/AudioPython/Songs'
