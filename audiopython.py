@@ -38,14 +38,14 @@ def beep(songNumber):
 def creatingSongArray(wav, sample, wav2, sample2):
     if sample == sample2:
         maxLength = 0
-        if len(wav) > len(wav2):
+        if len(wav) < len(wav2):
             maxLength = len(wav)
         else:
             maxLength = len(wav2)
         print(maxLength)
         workingWav = [0.0] * maxLength
         i = 0
-        while i < 6316032:
+        while i < maxLength:
             workingWav[i] = ((wav[i] + wav2[i])/2.0)
             i += 1
 
@@ -58,7 +58,7 @@ def creatingSongArray(wav, sample, wav2, sample2):
         print(workingWav[4045312])
         #newWav = np.array(workingWav, dtype=np.int16)
         newWav = np.array(workingWav, dtype=np.float32)
-        # scipy.io.wavfile.write("WrittenFile.wav", 44100, workingWav)
+        scipy.io.wavfile.write("WrittenFile.wav", 44100, newWav)
 
         # tempx, tempFs = librosa.load(templist, sr=None)
         print_plot_play(x=newWav, Fs=44100, text='WAV file 3: ')
