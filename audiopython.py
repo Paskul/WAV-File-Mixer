@@ -6,8 +6,6 @@ import librosa
 import pandas as pd
 import scipy
 from scipy.io.wavfile import write
-from vscode_audio import Audio
-
 
 def print_plot_play(x, Fs, text=''):
     """1. Prints information about an audio singal, 2. plots the waveform, and 3. Creates player
@@ -29,41 +27,62 @@ def print_plot_play(x, Fs, text=''):
     plt.show()
     # ipd.display(ipd.Audio(data=x, rate=Fs))
 
-def beep(songNumber):
-    if songNumber == 1:
-        ipd.display(ipd.Audio(fn_wav, autoplay=True))
-    if songNumber == 2:
-        ipd.display(ipd.Audio(fn_wav2, autoplay=True))
+def songLength(sampleRate, songData):
+    return len(songData)/sampleRate
     
 def creatingSongArray(wav, sample, wav2, sample2):
-    if sample == sample2:
-        maxLength = 0
-        if len(wav) < len(wav2):
-            maxLength = len(wav)
-        else:
-            maxLength = len(wav2)
-        print(maxLength)
-        workingWav = [0.0] * maxLength
-        i = 0
-        while i < maxLength:
-            workingWav[i] = ((wav[i] + wav2[i])/2.0)
-            i += 1
-
-        # for i in workingWav:
-            # workingWav[i] = ((wav[i] + wav2[i])/2.0)
-        
-        print(wav[4045312])
-        print(wav2[4045312])
-        print((wav[4045312] + wav2[4045312])/2.0)
-        print(workingWav[4045312])
-        #newWav = np.array(workingWav, dtype=np.int16)
-        newWav = np.array(workingWav, dtype=np.float32)
-        scipy.io.wavfile.write("WrittenFile.wav", 44100, newWav)
-
-        # tempx, tempFs = librosa.load(templist, sr=None)
-        print_plot_play(x=newWav, Fs=44100, text='WAV file 3: ')
+    sampleMaxLength = 0
+    if len(wav) < len(wav2):
+        sampleMaxLength = len(wav2)
     else:
-        print("Error! Not the same sample rate! File 1: " + sample + ", File 2: " + sample2)
+        sampleMaxLength = len(wav)
+    print(sampleMaxLength)
+
+    magicNumber = (songLength(sample, wav))/(songLength(sample2, wav2))
+    if magicNumber < 1:
+        magicNumber = (songLength(sample2, wav2))/(songLength(sample, wav))
+
+    if sample != sample2:
+        if sample > sample2:
+            #wav2 = scipy.signal.resample(wav2, len(wav), t=None, axis=0, window=None)
+            wav2 = scipy.signal.resample(wav2, int(sampleMaxLength*magicNumber), t=None, axis=0, window=None,)
+            sample2 = sample
+        else:
+            #wav = scipy.signal.resample(wav, len(wav2), t=None, axis=0, window=None)
+            wav = scipy.signal.resample(wav, int(sampleMaxLength*magicNumber), t=None, axis=0, window=None,)
+            sample = sample2
+
+    maxLength = 0
+    if len(wav) < len(wav2):
+        maxLength = len(wav)
+    else:
+        maxLength = len(wav2)
+    print(maxLength)
+
+    workingWav = [0.0] * maxLength
+    i = 0
+    while i < maxLength:
+        workingWav[i] = ((wav[i] + wav2[i])/2.0)
+        i += 1
+
+    # for i in workingWav:
+        # workingWav[i] = ((wav[i] + wav2[i])/2.0)
+        
+
+    print(wav[44000])
+    print(wav2[44000])
+    print((wav[44000] + wav2[44000])/2.0)
+    print(workingWav[44000])
+    #print(wav[4045312])
+    #print(wav2[4045312])
+    #print((wav[4045312] + wav2[4045312])/2.0)
+    #print(workingWav[4045312])
+    newWav = np.array(workingWav, dtype=np.float32)
+    print(len(newWav))
+    scipy.io.wavfile.write("WrittenFile.wav", 44100, newWav)
+
+    # tempx, tempFs = librosa.load(templist, sr=None)
+    print_plot_play(x=newWav, Fs=sample, text='WAV file 3: ')
     
 
 # Read wav1
